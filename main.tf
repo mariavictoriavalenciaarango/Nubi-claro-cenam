@@ -105,96 +105,96 @@ module "redshift_serverless" {
 
 # }
 
-# Creación del Rol IAM para Lambda
-resource "aws_iam_role" "lambda_role" {
-  name = "lambda_redshift_role"
+# # Creación del Rol IAM para Lambda
+# resource "aws_iam_role" "lambda_role" {
+#   name = "lambda_redshift_role"
 
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
-}
-
-
-# Permisos para que Lambda acceda a Redshift
-resource "aws_iam_policy" "lambda_redshift_policy" {
-  name        = "LambdaRedshiftPolicy"
-  description = "Permite que Lambda acceda a Redshift y ejecute consultas"
-  policy      = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "redshift:GetClusterCredentials",
-                "redshift:DescribeClusters"
-            ],
-            "Resource": [
-                "arn:aws:redshift:us-east-1:015319782619:cluster/mi-cluster-redshift",
-                "arn:aws:redshift:us-east-1:015319782619:dbuser:mi-cluster-redshift/admin_claro_cenam"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "redshift-data:ExecuteStatement",
-                "redshift-data:DescribeStatement",
-                "redshift-data:GetStatementResult"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-EOF
-}
+#   assume_role_policy = <<EOF
+# {
+#   "Version": "2012-10-17",
+#   "Statement": [
+#     {
+#       "Effect": "Allow",
+#       "Principal": {
+#         "Service": "lambda.amazonaws.com"
+#       },
+#       "Action": "sts:AssumeRole"
+#     }
+#   ]
+# }
+# EOF
+# }
 
 
-resource "aws_iam_policy_attachment" "lambda_attach_redshift_policy" {
-  name       = "lambda_attach_redshift_policy"
-  roles      = [aws_iam_role.lambda_role.name]
-  policy_arn = aws_iam_policy.lambda_redshift_policy.arn
-}
+# # Permisos para que Lambda acceda a Redshift
+# resource "aws_iam_policy" "lambda_redshift_policy" {
+#   name        = "LambdaRedshiftPolicy"
+#   description = "Permite que Lambda acceda a Redshift y ejecute consultas"
+#   policy      = <<EOF
+# {
+#     "Version": "2012-10-17",
+#     "Statement": [
+#         {
+#             "Effect": "Allow",
+#             "Action": [
+#                 "redshift:GetClusterCredentials",
+#                 "redshift:DescribeClusters"
+#             ],
+#             "Resource": [
+#                 "arn:aws:redshift:us-east-1:015319782619:cluster/mi-cluster-redshift",
+#                 "arn:aws:redshift:us-east-1:015319782619:dbuser:mi-cluster-redshift/admin_claro_cenam"
+#             ]
+#         },
+#         {
+#             "Effect": "Allow",
+#             "Action": [
+#                 "redshift-data:ExecuteStatement",
+#                 "redshift-data:DescribeStatement",
+#                 "redshift-data:GetStatementResult"
+#             ],
+#             "Resource": "*"
+#         }
+#     ]
+# }
+# EOF
+# }
 
 
-# Creación de logs en Cloudwatch
-resource "aws_iam_policy_attachment" "lambda_basic_execution_policy" {
-  name       = "lambda_basic_execution_policy"
-  roles      = [aws_iam_role.lambda_role.name]
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
+# resource "aws_iam_policy_attachment" "lambda_attach_redshift_policy" {
+#   name       = "lambda_attach_redshift_policy"
+#   roles      = [aws_iam_role.lambda_role.name]
+#   policy_arn = aws_iam_policy.lambda_redshift_policy.arn
+# }
 
 
-# Creación de la Lambda en Python
-data "archive_file" "lambda_package" {
-  type        = "zip"
-  source_file = "lambda/lambda_function.py"
-  output_path = "lambda_function.zip"
-}
+# # Creación de logs en Cloudwatch
+# resource "aws_iam_policy_attachment" "lambda_basic_execution_policy" {
+#   name       = "lambda_basic_execution_policy"
+#   roles      = [aws_iam_role.lambda_role.name]
+#   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+# }
 
-resource "aws_lambda_function" "create_table_lambda" {
-  function_name    = "create_table_lambda"
-  runtime          = "python3.9"
-  role             = aws_iam_role.lambda_role.arn
-  handler          = "lambda_function.lambda_handler"
-  filename         = "lambda_function.zip"
-  source_code_hash = data.archive_file.lambda_package.output_base64sha256
 
-  environment {
-    variables = {
-      REDSHIFT_DATABASE   = var.database_name
-      REDSHIFT_USER       = var.redshift_user_database
-    }
-  }
-}
+# # Creación de la Lambda en Python
+# data "archive_file" "lambda_package" {
+#   type        = "zip"
+#   source_file = "lambda/lambda_function.py"
+#   output_path = "lambda_function.zip"
+# }
+
+# resource "aws_lambda_function" "create_table_lambda" {
+#   function_name    = "create_table_lambda"
+#   runtime          = "python3.9"
+#   role             = aws_iam_role.lambda_role.arn
+#   handler          = "lambda_function.lambda_handler"
+#   filename         = "lambda_function.zip"
+#   source_code_hash = data.archive_file.lambda_package.output_base64sha256
+
+#   environment {
+#     variables = {
+#       REDSHIFT_DATABASE   = var.database_name
+#       REDSHIFT_USER       = var.redshift_user_database
+#     }
+#   }
+# }
 

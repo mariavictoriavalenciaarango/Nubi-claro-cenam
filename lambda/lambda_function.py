@@ -12,10 +12,10 @@ logging.basicConfig(level=logging.INFO)
 def execute_redshift_query(query):
     try:
         response = client.execute_statement(
-            ClusterIdentifier=os.getenv("REDSHIFT_CLUSTER_ID"),
-            Database=os.getenv("REDSHIFT_DATABASE"),
+            Database="kopiclouddb",
             Sql=query,
-            DbUser=os.getenv("REDSHIFT_USER")
+            # DbUser="kopiadmin",
+            WorkgroupName= "kopicloud-workgroup"
         )
         logging.info(f"Respuesta de Redshift: {response}")        
         return response
@@ -25,7 +25,7 @@ def execute_redshift_query(query):
 
 
 
-def lambda_handler(event, context):
+def lambda_handler():
     table_creation_query = """
     CREATE TABLE IF NOT EXISTS users (
         user_id VARCHAR(40) PRIMARY KEY,
@@ -45,3 +45,6 @@ def lambda_handler(event, context):
         "message": "Tabla 'users' creada en Redshift",
         "response": response
     }
+
+if __name__ == "__main__":
+    lambda_handler()
