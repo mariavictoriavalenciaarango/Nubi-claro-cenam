@@ -43,6 +43,8 @@ publicly_accessible        = false
 encrypted_cluster          = true
 name_subnet_group          = "redshift-subnet-group-cluster"
 
+
+
 # iam_roles                               = [module.iam_role.role-name]
 # security_group                          = [module.vpc.security_group]
 # subnet = [module.vpc.subnet_1, module.vpc.subnet_2, module.vpc.subnet_3]

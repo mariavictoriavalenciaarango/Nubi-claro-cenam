@@ -36,7 +36,6 @@ module "redshift_serverless" {
   depends_on = [module.iam_role, module.vpc]
 }
 
-
 # Creación del Clúster Redshift
 # data "aws_vpc" "selected" {
 #   filter {
