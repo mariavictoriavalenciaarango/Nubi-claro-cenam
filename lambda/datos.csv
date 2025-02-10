@@ -1,4 +1,4 @@
-id,nombre,edad
-1,Ana,25
-2,Juan,30
-3,Pedro,40
+user_id,age,registration_date,purchases,average_order_value,customer_segment,created_at
+"1","25","25","1998-10-14","400","1","pablo","2023-11-17 23:55:25"
+"2","30","30","1956-10-14","100","2","sergio","2023-11-17 23:55:25"
+"3","40","40","2001-10-14","50","3","maria","2023-11-17 23:55:25"

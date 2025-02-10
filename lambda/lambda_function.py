@@ -28,14 +28,14 @@ def execute_redshift_query(query):
 
 def lambda_handler():
     table_creation_query = """
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS users_t (
         user_id VARCHAR(40) PRIMARY KEY,
-        age INTEGER,
-        registration_date DATE,
-        purchases INTEGER,
-        average_order_value REAL,
+        age VARCHAR(40),
+        registration_date VARCHAR(40),
+        purchases VARCHAR(40),
+        average_order_value VARCHAR(40),
         customer_segment VARCHAR(30),
-        created_at TIMESTAMP DEFAULT current_timestamp
+        created_at VARCHAR(40)
     );
     """
     
@@ -88,7 +88,7 @@ def copy_to_redshift(bucket_name, s3_key, table_name, iam_role):
 
 
 if __name__ == "__main__":
-    BUCKET_NAME = 'prueba-cenam-claro-gov'
+    BUCKET_NAME = 'redshift-cenam-claro'
     S3_KEY = 'redshift/datos.csv'
     FILE_NAME = 'datos.csv'
     REDSHIFT_HOST = 'kopicloud-workgroup.015319782619.us-east-1.redshift-serverless.amazonaws.com'
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     REDSHIFT_PASSWORD = 'M3ss1G0at10'
     REDSHIFT_PORT = 5439
     IAM_ROLE = 'arn:aws:iam::015319782619:role/kopicloud-dev-redshift-serverless-role-new'
-    TABLE_NAME = 'users'
+    TABLE_NAME = 'users_t'
     lambda_handler()
     upload_to_s3(FILE_NAME, BUCKET_NAME, S3_KEY)
-    copy_to_redshift(BUCKET_NAME, S3_KEY, TABLE_NAME, IAM_ROLE)
+    #copy_to_redshift(BUCKET_NAME, S3_KEY, TABLE_NAME, IAM_ROLE)
